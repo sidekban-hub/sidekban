@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Masuk / Buat Akun - SidekBan</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z' fill='%232563eb'/%3E%3Cpath d='M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0' stroke='white' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  
+  <link rel="stylesheet" href="css/auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-auth.js" defer></script>
+</head>
+<body class="auth-body login-page">
+  <main class="auth-layout">
+    <section class="auth-brand">
+      <div class="auth-logo brand-logo" aria-label="Logo SidekBan">
+        <svg viewBox="0 0 48 48" fill="none" role="img" aria-hidden="true">
+          <path d="M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z" fill="url(#gradAuthAir)"/>
+          <path d="M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          <path d="M15 36.5c2.5-2 5-2 7.5 0s5 2 7.5 0" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.75"/>
+          <defs><linearGradient id="gradAuthAir" x1="10" y1="5" x2="38" y2="44" gradientUnits="userSpaceOnUse"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div class="brand-name">SidekBan</div>
+      <p class="brand-caption">Smart Flood Detection System</p>
+      <div class="brand-divider"></div>
+      <p class="brand-description">Sistem IoT Pemantauan Kondisi Air data ketinggian air, debit, status, dan riwayat melalui satu dashboard.</p>
+    </section>
+    <section class="auth-card">
+      <div class="auth-tabs" role="tablist" aria-label="Autentikasi">
+        <a href="login.html" class="auth-tab active" type="button">Masuk</a>
+        <a href="register.html" class="auth-tab active" type="button">Buat Akun</a>
+      </div>
+      <div id="login-panel">
+        <p class="eyebrow">SELAMAT DATANG</p>
+        <h1>Masuk ke SidekBan</h1>
+        <p class="auth-subtitle">Masuk untuk mengakses dashboard pemantauan banjir.</p>
+        <form id="login-form">
+          <label for="email">Email</label>
+          <input id="email" type="email" autocomplete="email" placeholder="nama@gmail.com" required>
+          <label for="password">Kata sandi</label>
+          <input id="password" type="password" autocomplete="current-password" placeholder="Masukkan kata sandi" required>
+          <div class="auth-options">
+            <label class="remember"><input id="show-password" type="checkbox"> Tampilkan kata sandi</label>
+            <a href="lupa-password.html">Lupa kata sandi?</a>
+          </div>
+          <button id="login-button" class="login-submit" type="submit"><span class="submit-arrow" aria-hidden="true">→</span> Masuk ke Dashboard</button>
+          <p id="auth-message" class="message" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <div id="signup-panel" hidden>
+        <p class="eyebrow">PENGGUNA BARU</p>
+        <h1>Buat akun SidekBan</h1>
+        <p class="auth-subtitle">Gunakan email aktif untuk menerima tautan verifikasi. Buat kata sandi baru khusus SidekBan.</p>
+        <form id="signup-form">
+          <label for="signup-email">Email aktif</label>
+          <input id="signup-email" type="email" autocomplete="email" placeholder="nama@gmail.com" required>
+          <label for="signup-password">Buat kata sandi</label>
+          <input id="signup-password" type="password" autocomplete="new-password" minlength="6" placeholder="Minimal 6 karakter" required>
+          <label for="signup-password-confirm">Ulangi kata sandi</label>
+          <input id="signup-password-confirm" type="password" autocomplete="new-password" minlength="6" placeholder="Masukkan ulang kata sandi" required>
+          <label class="remember signup-show"><input id="show-signup-password" type="checkbox"> Tampilkan kata sandi</label>
+          <button id="signup-button" type="submit">Buat Akun</button>
+          <p id="signup-message" class="message" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <p class="auth-footnote">Belum punya akun? <a class="back-link" href="register.html">Buat akun baru</a></p>
+    </section>
+  </main>
+</body>
+</html>

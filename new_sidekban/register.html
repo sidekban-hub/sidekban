@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buat Akun - SidekBan</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z' fill='%232563eb'/%3E%3Cpath d='M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0' stroke='white' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+
+    <link rel="stylesheet" href="css/auth.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-auth.js" defer></script>
+</head>
+
+<body class="auth-body auth-register">
+
+    <main class="auth-layout auth-layout-single">
+
+        <!-- HEADER BIRU SIDEKBAN -->
+        <section class="auth-brand">
+
+            <div class="auth-logo">
+                <svg viewBox="0 0 40 48"
+                     xmlns="http://www.w3.org/2000/svg"
+                     aria-label="Logo SidekBan"
+                     role="img">
+                    <defs>
+                        <linearGradient id="waterGradient"
+                            x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#60a5fa"/>
+                            <stop offset="100%" stop-color="#2563eb"/>
+                        </linearGradient>
+                    </defs>
+
+                    <path
+                        d="M20 2 C16 9 5 20 5 29
+                           A15 15 0 0 0 35 29
+                           C35 20 24 9 20 2Z"
+                        fill="url(#waterGradient)"/>
+
+                    <path
+                        d="M10 28 Q15 23 20 28 T30 28"
+                        fill="none"
+                        stroke="#fff"
+                        stroke-width="2"
+                        stroke-linecap="round"/>
+
+                    <path
+                        d="M12 33 Q17 28 22 33 T29 33"
+                        fill="none"
+                        stroke="#fff"
+                        stroke-width="1.5"
+                        stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <div class="brand-name">SidekBan</div>
+
+            <p class="brand-caption">
+                Smart Flood Detection System
+            </p>
+
+        </section>
+
+        <!-- FORM REGISTER -->
+        <section class="auth-card">
+
+            <p class="eyebrow">PENGGUNA BARU</p>
+
+            <h1>Buat akun SidekBan</h1>
+
+            <p class="auth-subtitle">
+                Daftar dengan email aktif. Buat kata sandi khusus
+                SidekBan.
+                Kami akan mengirim tautan verifikasi ke email kamu.
+            </p>
+
+            <form id="register-form" method="post">
+
+                <label for="username">Username</label>
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    autocomplete="username"
+                    minlength="3"
+                    maxlength="24"
+                    pattern="[A-Za-z0-9_.-]+"
+                    placeholder="Contoh: pengguna123"
+                    required
+                >
+
+                <label for="email">Alamat email</label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="nama@gmail.com"
+                    required
+                >
+
+                <label for="password">Buat kata sandi</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    minlength="6"
+                    autocomplete="new-password"
+                    placeholder="Minimal 6 karakter"
+                    required
+                >
+
+                <label for="password-confirm">
+                    Ulangi kata sandi
+                </label>
+                <input
+                    id="password-confirm"
+                    name="password-confirm"
+                    type="password"
+                    minlength="6"
+                    autocomplete="new-password"
+                    placeholder="Masukkan ulang kata sandi"
+                    required
+                >
+
+                <label class="show-password" for="show-password">
+                    <input id="show-password" type="checkbox">
+                    <span>Tampilkan kata sandi</span>
+                </label>
+
+                <button id="register-button" type="submit">
+                    Buat Akun
+                </button>
+
+                <p id="auth-message"
+                   class="message"
+                   role="status"
+                   aria-live="polite"></p>
+
+            </form>
+
+            <p class="login-prompt">
+                Sudah punya akun?
+                <a href="login.html">Masuk</a>
+            </p>
+
+            <p class="auth-footer">
+                Autentikasi dan verifikasi akun dikelola oleh Supabase.
+            </p>
+
+        </section>
+
+    </main>
+
+    <script>
+        const showPassword = document.getElementById("show-password");
+        const password = document.getElementById("password");
+        const passwordConfirm =
+            document.getElementById("password-confirm");
+
+        showPassword.addEventListener("change", function () {
+            const type = this.checked ? "text" : "password";
+
+            password.type = type;
+            passwordConfirm.type = type;
+        });
+    </script>
+
+</body>
+</html>

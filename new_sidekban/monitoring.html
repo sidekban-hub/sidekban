@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard SidekBan - Smart Flood Detection System</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z' fill='%232563eb'/%3E%3Cpath d='M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0' stroke='white' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Sembunyikan halaman sementara autentikasi diperiksa -->
+  <style id="sidekban-auth-lock">
+    html {
+      visibility: hidden;
+    }
+  </style>
+
+  <!-- Konfigurasi Supabase harus dimuat sebelum supabase-auth.js -->
+  <script src="js/supabase-config.js"></script>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z" fill="url(#gradAir1)"/>
+          <path d="M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          <path d="M15 36.5c2.5-2 5-2 7.5 0s5 2 7.5 0" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.75"/>
+          <defs>
+            <linearGradient id="gradAir1" x1="10" y1="5" x2="38" y2="44" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#3b82f6"/>
+              <stop offset="1" stop-color="#1d4ed8"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">SidekBan</div>
+        <div class="brand-sub">Smart Flood Detection System</div>
+      </div>
+    </div>
+
+    <nav>
+      <a href="monitoring.html" class="aktif">Dashboard</a>
+      <a href="riwayat.html">Riwayat</a>
+      <a href="kamera.html">Kamera</a>
+      <a href="tentang.html">Tentang</a>
+      <a href="akun.html">Akun</a>
+    </nav>
+
+    <div class="sidebar-user">
+      <button
+        type="button"
+        class="sidebar-user-trigger"
+        id="sidebar-user-trigger"
+        aria-expanded="false"
+        aria-label="Buka menu pengguna"
+      >
+        <span class="user-avatar" id="sidebar-user-avatar">U</span>
+        <span class="sidebar-user-text">
+          <strong id="sidebar-user-label">Pengguna</strong>
+          <small>Menu pengguna</small>
+        </span>
+        <span class="user-chevron">⌃</span>
+      </button>
+
+      <div class="user-popover" id="sidebar-user-popover">
+        <div class="popover-name" id="sidebar-user-fullname">Memuat akun…</div>
+        <button type="button" id="sidebar-logout">Keluar dari akun</button>
+      </div>
+    </div>
+
+    <div class="sidebar-footer"></div>
+  </aside>
+
+  <div class="konten">
+    <header>
+      <div>
+        <h1>Monitoring Real-time</h1>
+        <div class="sub">Ketinggian air, debit, curah hujan, dan status banjir</div>
+      </div>
+
+      <div class="header-right">
+        <div class="header-status" id="waktu-update">Menunggu data…</div>
+        <a class="header-account-link" href="akun.html" aria-label="Buka akun">
+          <span class="user-avatar" id="header-user-avatar">U</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <!-- Kartu ringkasan -->
+      <section class="kartu-container">
+        <div class="kartu">
+          <h2>Ketinggian Air</h2>
+          <p class="nilai">
+            <span id="tinggi-air">--</span><small>cm</small>
+          </p>
+        </div>
+
+        <div class="kartu">
+          <h2>Debit Air</h2>
+          <p class="nilai">
+            <span id="debit-air">--</span><small>L/min</small>
+          </p>
+        </div>
+
+        <div class="kartu">
+          <h2>Status Banjir</h2>
+          <p class="nilai status" id="status">--</p>
+        </div>
+
+        <div class="kartu">
+          <h2>Update Terakhir</h2>
+          <p class="nilai waktu" id="timestamp">--</p>
+        </div>
+      </section>
+
+      <!-- Kartu curah hujan -->
+      <section class="kartu-hujan">
+        <div class="hujan-atas">
+          <h2>Curah Hujan</h2>
+          <span class="hujan-badge hujan-none" id="hujan-badge">--</span>
+        </div>
+        <div class="hujan-bar" id="hujan-bar">
+          <span class="hujan-seg" data-level="tidak-hujan"></span>
+          <span class="hujan-seg" data-level="gerimis"></span>
+          <span class="hujan-seg" data-level="deras"></span>
+        </div>
+        <div class="hujan-label" id="hujan-label">
+          <span data-level="tidak-hujan">Tidak hujan</span>
+          <span data-level="gerimis">Gerimis</span>
+          <span data-level="deras">Deras</span>
+        </div>
+      </section>
+
+      <!-- Grafik ketinggian dan debit -->
+      <section class="grafik-grid">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Ketinggian Air</h2>
+            <span class="grafik-unit">cm</span>
+          </div>
+          <div class="chart-wrap"><canvas id="grafik-tinggi"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Debit Air</h2>
+            <span class="grafik-unit">L/min</span>
+          </div>
+          <div class="chart-wrap"><canvas id="grafik-debit"></canvas></div>
+        </div>
+      </section>
+
+      <!-- Status kondisi air -->
+      <aside class="panel status-ringkas-panel" aria-labelledby="judul-status-ringkas">
+        <div class="panel-head">
+          <h2 id="judul-status-ringkas">Status Kondisi Air</h2>
+          <span class="panel-tag tag-abu" id="status-ringkas-badge">Menunggu</span>
+        </div>
+
+        <div class="status-ringkas-indikator status-menunggu" id="status-ringkas-indikator">
+          <span class="status-ringkas-lampu"></span>
+          <div>
+            <div class="status-ringkas-label" id="status-ringkas-label">MENUNGGU DATA</div>
+            <p id="status-ringkas-deskripsi">Status akan tampil setelah data sensor diterima.</p>
+          </div>
+        </div>
+
+        <div class="status-level-list">
+          <div class="status-level">
+            <span class="status-level-dot aman"></span>
+            <span>
+              <b>Aman</b>
+              <small>Kondisi normal</small>
+            </span>
+          </div>
+
+          <div class="status-level">
+            <span class="status-level-dot siaga"></span>
+            <span>
+              <b>Siaga</b>
+              <small>Perlu perhatian</small>
+            </span>
+          </div>
+
+          <div class="status-level">
+            <span class="status-level-dot bahaya"></span>
+            <span>
+              <b>Bahaya</b>
+              <small>Potensi banjir tinggi</small>
+            </span>
+          </div>
+        </div>
+
+        <p class="status-ringkas-catatan">
+          Status mengikuti nilai yang dikirim perangkat sensor. Pastikan ambang batas
+          Aman/Siaga/Bahaya dikonfigurasi sesuai lokasi pemasangan.
+        </p>
+      </aside>
+
+      <!-- Kinerja sensor -->
+      <section class="panel sensor-health-panel" aria-labelledby="judul-kinerja-sensor">
+        <div class="panel-head">
+          <h2 id="judul-kinerja-sensor">Kinerja Sensor Real-time</h2>
+          <span class="panel-tag tag-abu" id="sensor-health-badge">Memeriksa…</span>
+        </div>
+
+        <p class="sensor-health-intro">
+          Pemeriksaan otomatis berdasarkan data yang diterima dari Supabase.
+          Indikator ini menilai koneksi data, kebaruan data, dan kewajaran nilai—
+          bukan pengganti kalibrasi fisik sensor.
+        </p>
+
+        <div class="sensor-health-grid">
+          <article class="health-item">
+            <span class="health-dot" id="health-connection-dot"></span>
+            <div>
+              <h3>Koneksi data</h3>
+              <p id="health-connection">Menunggu pemeriksaan…</p>
+            </div>
+          </article>
+
+          <article class="health-item">
+            <span class="health-dot" id="health-freshness-dot"></span>
+            <div>
+              <h3>Data terbaru</h3>
+              <p id="health-freshness">Belum ada data sensor</p>
+            </div>
+          </article>
+
+          <article class="health-item">
+            <span class="health-dot" id="health-values-dot"></span>
+            <div>
+              <h3>Kewajaran nilai</h3>
+              <p id="health-values">Menunggu data sensor</p>
+            </div>
+          </article>
+
+          <article class="health-item">
+            <span class="health-dot" id="health-realtime-dot"></span>
+            <div>
+              <h3>Pembaruan real-time</h3>
+              <p id="health-realtime">Menunggu koneksi…</p>
+            </div>
+          </article>
+        </div>
+
+        <p class="sensor-health-note" id="sensor-health-note">
+          Belum ada data yang dapat diperiksa.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Skrip dashboard -->
+  <script src="js/realtime.js"></script>
+  <script src="js/grafik.js"></script>
+
+  <!-- Penjagaan autentikasi utama -->
+  <script src="js/supabase-auth.js"></script>
+
+  <!-- Menu akun dan logout -->
+  <script>
+    (function () {
+      const trigger = document.getElementById("sidebar-user-trigger");
+      const pop = document.getElementById("sidebar-user-popover");
+      const logout = document.getElementById("sidebar-logout");
+
+      if (trigger && pop) {
+        trigger.addEventListener("click", function () {
+          const isOpen = pop.classList.toggle("open");
+          trigger.setAttribute("aria-expanded", String(isOpen));
+        });
+
+        document.addEventListener("click", function (event) {
+          if (!event.target.closest(".sidebar-user")) {
+            pop.classList.remove("open");
+            trigger.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+
+      async function loadUser() {
+        let user = null;
+
+        try {
+          if (typeof supabaseClient !== "undefined" && supabaseClient) {
+            const { data, error } = await supabaseClient.auth.getUser();
+
+            if (!error && data) {
+              user = data.user;
+            }
+          }
+        } catch (error) {
+          console.error("Gagal memuat pengguna:", error);
+        }
+
+        const username = user
+          ? (
+              user.user_metadata?.username ||
+              user.user_metadata?.name ||
+              (user.email ? user.email.split("@")[0] : "Pengguna")
+            )
+          : "Belum login";
+
+        ["sidebar-user-label", "sidebar-user-fullname"].forEach(function (id) {
+          const element = document.getElementById(id);
+          if (element) {
+            element.textContent = username;
+          }
+        });
+
+        ["sidebar-user-avatar", "header-user-avatar"].forEach(function (id) {
+          const element = document.getElementById(id);
+          if (element) {
+            element.textContent = username === "Belum login"
+              ? "U"
+              : username.charAt(0).toUpperCase();
+          }
+        });
+      }
+
+      if (logout) {
+        logout.addEventListener("click", async function () {
+          if (typeof window.sidekbanLogout !== "function") {
+            alert("Fungsi logout belum tersedia. Periksa js/supabase-auth.js.");
+            return;
+          }
+
+          logout.disabled = true;
+          logout.textContent = "Sedang keluar…";
+
+          try {
+            await window.sidekbanLogout();
+          } catch (error) {
+            console.error("Logout gagal:", error);
+            alert("Gagal keluar. Silakan coba kembali.");
+            logout.disabled = false;
+            logout.textContent = "Keluar dari akun";
+          }
+        });
+      }
+
+      loadUser();
+    })();
+  </script>
+</body>
+</html>

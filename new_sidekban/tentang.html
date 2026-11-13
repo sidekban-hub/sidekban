@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tentang SidekBan</title>
+  
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z' fill='%232563eb'/%3E%3Cpath d='M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0' stroke='white' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Sembunyikan halaman selama autentikasi diperiksa -->
+  <style id="sidekban-auth-lock">
+    html {
+      visibility: hidden;
+    }
+  </style>
+
+  <!-- Konfigurasi Supabase -->
+  <script src="js/supabase-config.js"></script>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z" fill="#2563eb"/>
+          <path d="M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div>
+        <div class="brand-name">SidekBan</div>
+        <div class="brand-sub">Smart Flood Detection System</div>
+      </div>
+    </div>
+
+    <nav>
+      <a href="monitoring.html">Dashboard</a>
+      <a href="riwayat.html">Riwayat</a>
+      <a href="kamera.html">Kamera</a>
+      <a href="tentang.html" class="aktif">Tentang</a>
+      <a href="akun.html">Akun</a>
+    </nav>
+
+    <div class="sidebar-user">
+      <button
+        type="button"
+        class="sidebar-user-trigger"
+        id="sidebar-user-trigger"
+        aria-expanded="false"
+        aria-label="Buka menu pengguna"
+      >
+        <span class="user-avatar" id="sidebar-user-avatar">U</span>
+
+        <span class="sidebar-user-text">
+          <strong id="sidebar-user-label">Pengguna</strong>
+          <small>Menu pengguna</small>
+        </span>
+
+        <span class="user-chevron">⌃</span>
+      </button>
+
+      <div class="user-popover" id="sidebar-user-popover">
+        <div class="popover-name" id="sidebar-user-fullname">Memuat akun…</div>
+        <button type="button" id="sidebar-logout">Keluar dari akun</button>
+      </div>
+    </div>
+
+    <div class="sidebar-footer"></div>
+  </aside>
+
+  <div class="konten">
+    <header>
+      <div>
+        <h1>Tentang SidekBan</h1>
+        <div class="sub">Mengenal tujuan, tim, dan pengembangan proyek</div>
+      </div>
+
+      <a class="header-account-link" href="akun.html" aria-label="Buka akun">
+        <span class="user-avatar" id="header-user-avatar">U</span>
+      </a>
+    </header>
+
+    <main class="about-main">
+      <section class="about-hero">
+        <span class="about-eyebrow">SMART FLOOD DETECTION SYSTEM</span>
+
+        <h2>Teknologi untuk membantu memantau kondisi air.</h2>
+
+        <p>
+          SidekBan (Sistem Deteksi Banjir) adalah prototipe sistem pemantauan
+          berbasis IoT yang menyajikan data ketinggian air, debit, status,
+          dan riwayat melalui satu dashboard.
+        </p>
+      </section>
+
+      <section class="about-grid">
+        <article class="about-card">
+          <div class="about-icon">👥</div>
+
+          <h2>Tim pembuat</h2>
+
+          <p>
+            Proyek ini dikembangkan oleh tim SidekBan - Kelompok 3.
+          </p>
+
+          <ul class="team-list">
+            <li>
+              <strong>Dino Raizan Daffa</strong>
+              <span>Perancang / pengembang</span>
+            </li>
+
+            <li>
+              <strong>Muhammad Ammar Reihan</strong>
+              <span>Pengembangan sistem</span>
+            </li>
+
+            <li>
+              <strong>Muhammad Sukron</strong>
+              <span>Pengujian dan dokumentasi</span>
+            </li>
+          </ul>
+
+          <p class="about-note"></p>
+        </article>
+
+        <article class="about-card">
+          <div class="about-icon">🎯</div>
+
+          <h2>Alasan proyek dibuat</h2>
+
+          <p>
+            Informasi kondisi air yang terlambat atau sulit dipantau dapat
+            menyulitkan pengguna dalam mengenali perubahan situasi. SidekBan
+            dibuat untuk menyatukan informasi sensor ke dalam tampilan yang
+            mudah dibaca, membantu pemantauan, dan mendukung kewaspadaan dini.
+          </p>
+
+          <p class="about-note">
+            SidekBan merupakan alat bantu pemantauan, bukan pengganti
+            peringatan resmi atau keputusan petugas berwenang.
+          </p>
+        </article>
+
+        <article class="about-card about-card-wide">
+          <div class="about-icon">🔬</div>
+
+          <h2>Pengembangan dari penelitian sebelumnya</h2>
+
+          <p>
+            SidekBan meneruskan gagasan umum penelitian sistem pemantauan
+            banjir berbasis sensor dan Internet of Things (IoT). Pengembangan
+            pada prototipe ini berfokus pada penyajian data ketinggian dan
+            debit air, pembaruan real-time, riwayat perubahan status,
+            pemantauan kamera, serta pemeriksaan dasar koneksi dan kewajaran
+            data sensor.
+          </p>
+
+          <p>
+            Untuk laporan akademik, tambahkan judul, penulis, tahun, dan
+            tautan penelitian terdahulu yang benar-benar menjadi acuan tim.
+            Jangan menganggap uraian ini sebagai sitasi penelitian tertentu.
+          </p>
+        </article>
+      </section>
+
+      <section class="about-card feedback-card">
+        <div class="about-icon">✉️</div>
+
+        <h2>Kontak layanan, saran &amp; masukan</h2>
+
+        <p>
+          Temukan kekurangan, punya ide fitur, atau ingin melaporkan masalah?
+          Isi formulir ini. Aplikasi akan menyiapkan email agar kamu bisa
+          meninjau dan mengirimkannya.
+        </p>
+
+        <form id="feedback-form" class="feedback-form">
+          <label for="feedback-name">Nama (opsional)</label>
+          <input
+            id="feedback-name"
+            name="nama"
+            type="text"
+            placeholder="Nama kamu"
+          >
+
+          <label for="feedback-email">Email balasan (opsional)</label>
+          <input
+            id="feedback-email"
+            name="email"
+            type="email"
+            placeholder="nama@email.com"
+          >
+
+          <label>Penilaian pengalaman menggunakan SidekBan</label>
+
+          <div class="rating-options" role="radiogroup" aria-label="Penilaian">
+            <label>
+              <input type="radio" name="rating" value="1" required>
+              <span>★</span>
+              <small>Buruk</small>
+            </label>
+
+            <label>
+              <input type="radio" name="rating" value="2">
+              <span>★</span>
+              <small>Kurang</small>
+            </label>
+
+            <label>
+              <input type="radio" name="rating" value="3">
+              <span>★</span>
+              <small>Cukup</small>
+            </label>
+
+            <label>
+              <input type="radio" name="rating" value="4">
+              <span>★</span>
+              <small>Baik</small>
+            </label>
+
+            <label>
+              <input type="radio" name="rating" value="5">
+              <span>★</span>
+              <small>Sangat baik</small>
+            </label>
+          </div>
+
+          <label for="feedback-message">Saran, masukan, atau kendala</label>
+
+          <textarea
+            id="feedback-message"
+            name="pesan"
+            rows="5"
+            placeholder="Tuliskan saran atau kendala yang kamu temukan..."
+            required
+          ></textarea>
+
+          <button class="btn-primary" type="submit">
+            Siapkan email masukan
+          </button>
+
+          <p class="feedback-status" id="feedback-status" role="status"></p>
+        </form>
+      </section>
+
+      <p class="about-footer"></p>
+    </main>
+  </div>
+
+  <!-- Penjagaan autentikasi utama -->
+  <script src="js/supabase-auth.js"></script>
+
+  <!-- Formulir masukan melalui aplikasi email -->
+  <script>
+    (function () {
+      // Gunakan alamat email resmi tim.
+      const SERVICE_EMAIL = "SidekBanKLP3@gmail.com";
+
+      const formElement = document.getElementById("feedback-form");
+      const statusElement = document.getElementById("feedback-status");
+
+      if (!formElement || !statusElement) {
+        return;
+      }
+
+      formElement.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const form = new FormData(formElement);
+        const rating = form.get("rating");
+        const name = (form.get("nama") || "").toString().trim();
+        const email = (form.get("email") || "").toString().trim();
+        const messageText = (form.get("pesan") || "").toString().trim();
+
+        if (!rating || !messageText) {
+          statusElement.textContent =
+            "Pilih penilaian dan isi pesan sebelum melanjutkan.";
+          return;
+        }
+
+        if (
+          !SERVICE_EMAIL ||
+          SERVICE_EMAIL === "ganti-email-layanan@example.com"
+        ) {
+          statusElement.textContent =
+            "Alamat email tujuan belum dikonfigurasi. Ubah SERVICE_EMAIL ke email resmi tim.";
+          return;
+        }
+
+        const message = [
+          "Masukan untuk SidekBan",
+          "",
+          "Nama: " + (name || "-"),
+          "Email balasan: " + (email || "-"),
+          "Penilaian: " + rating + "/5",
+          "",
+          "Pesan:",
+          messageText
+        ].join("\n");
+
+        const mailtoUrl =
+          "mailto:" + SERVICE_EMAIL +
+          "?subject=" + encodeURIComponent("Saran dan Masukan SidekBan") +
+          "&body=" + encodeURIComponent(message);
+
+        statusElement.textContent =
+          "Aplikasi email akan dibuka. Periksa isi pesan lalu kirim untuk menyampaikan masukan.";
+
+        window.location.href = mailtoUrl;
+      });
+    })();
+  </script>
+
+  <!-- Menu pengguna dan logout -->
+  <script>
+    (function () {
+      const trigger = document.getElementById("sidebar-user-trigger");
+      const pop = document.getElementById("sidebar-user-popover");
+      const logout = document.getElementById("sidebar-logout");
+
+      if (trigger && pop) {
+        trigger.addEventListener("click", function () {
+          const isOpen = pop.classList.toggle("open");
+          trigger.setAttribute("aria-expanded", String(isOpen));
+        });
+
+        document.addEventListener("click", function (event) {
+          if (!event.target.closest(".sidebar-user")) {
+            pop.classList.remove("open");
+            trigger.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+
+      async function loadUser() {
+        let user = null;
+
+        try {
+          if (
+            typeof supabaseClient !== "undefined" &&
+            supabaseClient
+          ) {
+            const { data, error } = await supabaseClient.auth.getUser();
+
+            if (!error && data) {
+              user = data.user;
+            }
+          }
+        } catch (error) {
+          console.error("Gagal memuat pengguna:", error);
+        }
+
+        const username = user
+          ? (
+              user.user_metadata?.username ||
+              user.user_metadata?.name ||
+              (user.email ? user.email.split("@")[0] : "Pengguna")
+            )
+          : "Belum login";
+
+        ["sidebar-user-label", "sidebar-user-fullname"].forEach(function (id) {
+          const element = document.getElementById(id);
+
+          if (element) {
+            element.textContent = username;
+          }
+        });
+
+        ["sidebar-user-avatar", "header-user-avatar"].forEach(function (id) {
+          const element = document.getElementById(id);
+
+          if (element) {
+            element.textContent = username === "Belum login"
+              ? "U"
+              : username.charAt(0).toUpperCase();
+          }
+        });
+      }
+
+      if (logout) {
+        logout.addEventListener("click", async function () {
+          if (typeof window.sidekbanLogout !== "function") {
+            alert(
+              "Fungsi logout belum tersedia. Periksa js/supabase-auth.js."
+            );
+            return;
+          }
+
+          logout.disabled = true;
+          logout.textContent = "Sedang keluar…";
+
+          try {
+            await window.sidekbanLogout();
+          } catch (error) {
+            console.error("Logout gagal:", error);
+            alert("Gagal keluar. Silakan coba kembali.");
+
+            logout.disabled = false;
+            logout.textContent = "Keluar dari akun";
+          }
+        });
+      }
+
+      loadUser();
+    })();
+  </script>
+</body>
+</html>

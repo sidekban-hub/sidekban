@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kamera - SidekBan Smart Flood Detection System</title>
+  
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z' fill='%232563eb'/%3E%3Cpath d='M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0' stroke='white' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+
+  <!-- Konten disembunyikan sampai autentikasi diperiksa -->
+  <style>
+    html {
+      visibility: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z"
+            fill="url(#gradAir1)"/>
+          <path d="M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0"
+            stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          <path d="M15 36.5c2.5-2 5-2 7.5 0s5 2 7.5 0"
+            stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"
+            fill="none" opacity="0.75"/>
+          <defs>
+            <linearGradient id="gradAir1" x1="10" y1="5" x2="38" y2="44"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="#3b82f6"/>
+              <stop offset="1" stop-color="#1d4ed8"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <div>
+        <div class="brand-name">SidekBan</div>
+        <div class="brand-sub">Smart Flood Detection System</div>
+      </div>
+    </div>
+
+    <nav>
+      <a href="monitoring.html">Dashboard</a>
+      <a href="riwayat.html">Riwayat</a>
+      <a href="kamera.html" class="aktif" aria-current="page">Kamera</a>
+      <a href="tentang.html">Tentang</a>
+      <a href="akun.html">Akun</a>
+    </nav>
+
+    <div class="sidebar-user">
+      <button
+        type="button"
+        class="sidebar-user-trigger"
+        id="sidebar-user-trigger"
+        aria-expanded="false"
+        aria-label="Buka menu pengguna">
+
+        <span class="user-avatar" id="sidebar-user-avatar">U</span>
+
+        <span class="sidebar-user-text">
+          <strong id="sidebar-user-label">Pengguna</strong>
+          <small>Menu pengguna</small>
+        </span>
+
+        <span class="user-chevron">⌃</span>
+      </button>
+
+      <div class="user-popover" id="sidebar-user-popover">
+        <div class="popover-name" id="sidebar-user-fullname">
+          Memuat akun…
+        </div>
+        <button type="button" id="sidebar-logout">
+          Keluar dari akun
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-footer"></div>
+  </aside>
+
+  <div class="konten">
+    <header>
+      <div>
+        <h1>Kamera Pemantauan</h1>
+        <div class="sub">Tampilkan Kamera dari ESP32-S3 CAM</div>
+      </div>
+
+      <div class="header-right">
+        <span class="header-status" id="camera-status">Nonaktif</span>
+
+        <a class="header-account-link" href="akun.html"
+          aria-label="Buka akun">
+          <span class="user-avatar" id="header-user-avatar">U</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section class="kamera-container">
+        <div class="kamera-view camera-screen" id="camera-screen">
+          <div class="kamera-placeholder">
+            <div style="font-size:36px">📷</div>
+            <p>Kamera belum diaktifkan</p>
+            <small>
+              Masukkan alamat/IP stream kamera, lalu tekan Aktifkan Kamera.
+            </small>
+          </div>
+        </div>
+
+        <div class="kamera-kontrol">
+          <h2>Pengaturan Kamera</h2>
+
+          <label for="camera-url" class="camera-label">URL stream</label>
+
+          <input
+            id="camera-url"
+            class="camera-input"
+            type="url"
+            value="http://192.168.1.11:81/stream"
+            placeholder="http://alamat-kamera:81/stream">
+
+          <div class="tombol-group camera-buttons">
+            <button class="btn btn-buka" id="camera-start" type="button">
+              ON
+            </button>
+
+            <button class="btn btn-tutup" id="camera-stop" type="button">
+              OFF
+            </button>
+
+            <button class="btn btn-capture" id="camera-capture" type="button">
+              Tangkap Gambar
+            </button>
+          </div>
+
+          <div class="screenshot-area">
+            <h3>Hasil Gambar</h3>
+
+            <div class="screenshot-preview" id="screenshot-preview">
+              Belum ada gambar yang ditangkap.
+            </div>
+
+            <a
+              class="btn-link screenshot-download"
+              id="screenshot-download"
+              hidden
+              download="sidekban-screenshot.png">
+              Unduh
+            </a>
+          </div>
+
+          <p class="camera-help">
+            Ganti URL sesuai alamat IP kamera Anda.
+          </p>
+
+          <p id="camera-message" class="camera-message" role="status">
+            Kamera nonaktif.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Fungsi kamera -->
+  <script>
+    const screenEl = document.getElementById("camera-screen");
+    const urlEl = document.getElementById("camera-url");
+    const statusEl = document.getElementById("camera-status");
+    const messageEl = document.getElementById("camera-message");
+    const screenshotPreview = document.getElementById("screenshot-preview");
+    const screenshotDownload = document.getElementById("screenshot-download");
+
+    let activeImage = null;
+
+    function startCamera() {
+      const url = urlEl.value.trim();
+
+      if (!/^https?:\/\//i.test(url)) {
+        messageEl.textContent =
+          "URL tidak valid. Gunakan alamat yang diawali http:// atau https://.";
+        return;
+      }
+
+      screenEl.replaceChildren();
+
+      const img = document.createElement("img");
+      img.alt = "Stream kamera";
+      img.src = url;
+      activeImage = img;
+
+      img.onerror = () => {
+        statusEl.textContent = "Tidak terhubung";
+        messageEl.textContent =
+          "Stream gagal dimuat. Periksa URL, daya kamera, dan jaringan lokal.";
+      };
+
+      img.onload = () => {
+        statusEl.textContent = "Aktif";
+        messageEl.textContent = "Stream berhasil dimuat.";
+      };
+
+      screenEl.appendChild(img);
+
+      statusEl.textContent = "Menghubungkan…";
+      messageEl.textContent = "Sedang mencoba menghubungkan ke kamera.";
+    }
+
+    function captureCamera() {
+      if (
+        !activeImage ||
+        !activeImage.complete ||
+        !activeImage.naturalWidth
+      ) {
+        messageEl.textContent =
+          "Aktifkan kamera dan tunggu gambar tampil sebelum mengambil screenshot.";
+        return;
+      }
+
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = activeImage.naturalWidth;
+        canvas.height = activeImage.naturalHeight;
+
+        const context = canvas.getContext("2d");
+        context.drawImage(activeImage, 0, 0);
+
+        const dataUrl = canvas.toDataURL("image/png");
+
+        const preview = document.createElement("img");
+        preview.alt = "Screenshot kamera terakhir";
+        preview.src = dataUrl;
+
+        screenshotPreview.replaceChildren(preview);
+        screenshotDownload.href = dataUrl;
+        screenshotDownload.hidden = false;
+
+        messageEl.textContent =
+          "Screenshot berhasil diambil. Kamu dapat mengunduh gambar.";
+      } catch (error) {
+        console.error("Gagal mengambil screenshot:", error);
+
+        messageEl.textContent =
+          "Screenshot diblokir oleh aturan keamanan lintas-origin browser. " +
+          "Periksa dukungan CORS atau gunakan sumber gambar yang mengizinkan akses canvas.";
+      }
+    }
+
+    function stopCamera() {
+      activeImage = null;
+      screenEl.replaceChildren();
+
+      const placeholder = document.createElement("div");
+      placeholder.className = "kamera-placeholder";
+      placeholder.innerHTML =
+        '<div style="font-size:36px">📷</div>' +
+        "<p>Kamera nonaktif</p>" +
+        "<small>Aktifkan dari panel Pengaturan Kamera.</small>";
+
+      screenEl.appendChild(placeholder);
+
+      statusEl.textContent = "Nonaktif";
+      messageEl.textContent = "Kamera dinonaktifkan.";
+    }
+
+    document.getElementById("camera-start")
+      .addEventListener("click", startCamera);
+
+    document.getElementById("camera-stop")
+      .addEventListener("click", stopCamera);
+
+    document.getElementById("camera-capture")
+      .addEventListener("click", captureCamera);
+  </script>
+
+  <!-- Menu pengguna dan logout -->
+  <script>
+    (function () {
+      const trigger = document.getElementById("sidebar-user-trigger");
+      const popover = document.getElementById("sidebar-user-popover");
+      const logoutButton = document.getElementById("sidebar-logout");
+
+      if (trigger && popover) {
+        trigger.addEventListener("click", () => {
+          const isOpen = popover.classList.toggle("open");
+          trigger.setAttribute("aria-expanded", String(isOpen));
+        });
+
+        document.addEventListener("click", event => {
+          if (!event.target.closest(".sidebar-user")) {
+            popover.classList.remove("open");
+            trigger.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+
+      async function loadUser() {
+        let user = null;
+
+        try {
+          if (
+            typeof supabaseClient !== "undefined" &&
+            supabaseClient
+          ) {
+            const { data, error } =
+              await supabaseClient.auth.getUser();
+
+            if (!error) {
+              user = data.user;
+            }
+          }
+        } catch (error) {
+          console.error("Gagal memuat pengguna:", error);
+        }
+
+        const username = user
+          ? (
+              user.user_metadata?.username ||
+              user.user_metadata?.name ||
+              (user.email ? user.email.split("@")[0] : "Pengguna")
+            )
+          : "Belum login";
+
+        ["sidebar-user-label", "sidebar-user-fullname"].forEach(id => {
+          const element = document.getElementById(id);
+          if (element) element.textContent = username;
+        });
+
+        ["sidebar-user-avatar", "header-user-avatar"].forEach(id => {
+          const element = document.getElementById(id);
+
+          if (element) {
+            element.textContent =
+              username === "Belum login"
+                ? "U"
+                : username.charAt(0).toUpperCase();
+          }
+        });
+      }
+
+      logoutButton.addEventListener("click", async () => {
+        if (typeof window.sidekbanLogout !== "function") {
+          alert(
+            "Fungsi logout belum tersedia. Periksa js/supabase-auth.js."
+          );
+          return;
+        }
+
+        logoutButton.disabled = true;
+        logoutButton.textContent = "Sedang keluar…";
+
+        try {
+          await window.sidekbanLogout();
+        } catch (error) {
+          console.error("Logout gagal:", error);
+          alert("Gagal keluar. Silakan coba kembali.");
+
+          logoutButton.disabled = false;
+          logoutButton.textContent = "Keluar dari akun";
+        }
+      });
+
+      loadUser();
+    })();
+  </script>
+
+  <!-- Penjagaan autentikasi utama: jangan tambahkan guard kedua -->
+  <script src="js/supabase-auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akun Saya - SidekBan</title>
+  
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z' fill='%232563eb'/%3E%3Cpath d='M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0' stroke='white' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+
+  <!-- Mencegah konten privat tampil sebelum autentikasi diperiksa -->
+  <style>
+    html {
+      visibility: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 5C24 5 10 20.5 10 30a14 14 0 0 0 28 0C38 20.5 24 5 24 5Z" fill="#2563eb"/>
+          <path d="M13 31c3-2.5 6-2.5 9 0s6 2.5 9 0" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">SidekBan</div>
+        <div class="brand-sub">Smart Flood Detection System</div>
+      </div>
+    </div>
+
+    <nav>
+      <a href="monitoring.html">Dashboard</a>
+      <a href="riwayat.html">Riwayat</a>
+      <a href="kamera.html">Kamera</a>
+      <a href="tentang.html">Tentang</a>
+      <a href="akun.html" class="aktif">Akun</a>
+    </nav>
+
+    <div class="sidebar-footer"></div>
+  </aside>
+
+  <div class="konten">
+    <header>
+      <div>
+        <h1>Akun Saya</h1>
+        <div class="sub">Data Pengguna/User</div>
+      </div>
+    </header>
+
+    <main class="account-main">
+      <section class="account-card">
+        <div class="account-avatar" id="account-avatar">S</div>
+        <span class="account-kicker">PROFIL PENGGUNA</span>
+
+        <h2 id="account-username">Memuat akun...</h2>
+        <p class="account-desc">Informasi Akun User</p>
+
+        <div class="account-details">
+          <div>
+            <span>Username</span>
+            <strong id="detail-username">—</strong>
+          </div>
+
+          <div>
+            <span>Alamat email</span>
+            <strong id="detail-email">—</strong>
+          </div>
+
+          <div>
+            <span>Status email</span>
+            <strong id="detail-verification">Memeriksa...</strong>
+          </div>
+
+          <div>
+            <span>Akun dibuat</span>
+            <strong id="detail-created">—</strong>
+          </div>
+        </div>
+
+        <p class="account-message" id="account-message" role="status"></p>
+
+        <button class="btn-danger" id="logout-button" type="button">
+          Keluar dari akun
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <!-- Mengambil informasi pengguna yang sedang login -->
+  <script>
+    (async function () {
+      const $ = id => document.getElementById(id);
+      const message = $("account-message");
+      const logoutButton = $("logout-button");
+
+      if (
+        typeof supabaseClient === "undefined" ||
+        !supabaseClient
+      ) {
+        $("account-username").textContent = "Akun tidak dapat dimuat";
+        message.textContent =
+          "Supabase belum dikonfigurasi. Periksa js/supabase-config.js.";
+        logoutButton.disabled = true;
+        return;
+      }
+
+      try {
+        const { data, error } = await supabaseClient.auth.getUser();
+
+        if (error || !data.user) {
+          message.textContent =
+            "Sesi tidak ditemukan. Silakan masuk kembali.";
+          return;
+        }
+
+        const user = data.user;
+
+        const username =
+          user.user_metadata?.username ||
+          user.user_metadata?.name ||
+          (user.email ? user.email.split("@")[0] : "Pengguna");
+
+        $("account-avatar").textContent =
+          username.charAt(0).toUpperCase();
+
+        $("account-username").textContent = username;
+        $("detail-username").textContent = username;
+        $("detail-email").textContent =
+          user.email || "Tidak tersedia";
+
+        $("detail-verification").textContent =
+          user.email_confirmed_at
+            ? "Terverifikasi"
+            : "Belum terverifikasi";
+
+        $("detail-verification").className =
+          user.email_confirmed_at
+            ? "verified"
+            : "unverified";
+
+        $("detail-created").textContent = user.created_at
+          ? new Date(user.created_at).toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric"
+            })
+          : "Tidak tersedia";
+
+      } catch (error) {
+        console.error("Gagal memuat profil:", error);
+        message.textContent =
+          "Terjadi kesalahan saat memuat profil. Muat ulang halaman untuk mencoba lagi.";
+      }
+
+      // Gunakan mekanisme logout dari supabase-auth.js.
+      logoutButton.addEventListener("click", async function () {
+        if (typeof window.sidekbanLogout !== "function") {
+          message.textContent =
+            "Fungsi logout belum tersedia. Muat ulang halaman.";
+          return;
+        }
+
+        logoutButton.disabled = true;
+        logoutButton.textContent = "Sedang keluar…";
+
+        try {
+          await window.sidekbanLogout();
+        } catch (error) {
+          console.error("Logout gagal:", error);
+          message.textContent =
+            "Gagal keluar. Silakan coba kembali.";
+          logoutButton.disabled = false;
+          logoutButton.textContent = "Keluar dari akun";
+        }
+      });
+    })();
+  </script>
+
+  <!-- Penjagaan autentikasi utama -->
+  <script src="js/supabase-auth.js"></script>
+</body>
+</html>
