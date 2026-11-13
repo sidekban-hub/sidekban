@@ -5,8 +5,8 @@
   // 1. KONFIGURASI
   // ==================================================
 
-  const BASE_URL = "https://sidekbanflood.web.id";
-  const TAB_KEY = "sidekban_tab_authenticated";
+  const BASE_URL = "........................";
+  const TAB_KEY = ".........................";
 
   const PUBLIC_PAGES = new Set([
     "login.html",
